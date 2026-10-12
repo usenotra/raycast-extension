@@ -1,5 +1,9 @@
 # Notra Changelog
 
+## [Content List Fix] - {PR_MERGE_DATE}
+
+- Fixed content loading by sending draft and published statuses in the format expected by the API
+
 ## [Account API Keys] - {PR_MERGE_DATE}
 
 - Added support for account API keys that work across all of your workspaces
