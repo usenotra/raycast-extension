@@ -111,7 +111,7 @@ export default function Command() {
       <Form.Dropdown
         defaultValue={defaultBrandIdentityId}
         id="brandIdentityId"
-        key={`brandIdentityId-${workspace?.id}`}
+        key={`brandIdentityId-${workspace?.id}-${defaultBrandIdentityId}`}
         title="Brand Identity"
       >
         {(brandIdentities ?? []).map((bi) => (

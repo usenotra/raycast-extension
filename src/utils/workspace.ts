@@ -11,10 +11,27 @@ export function resolveSelectedWorkspace(
 ): Workspace | undefined {
   const workspaces = response?.workspaces ?? [];
 
+  if (workspaces.length === 0) {
+    // Without a workspace list (e.g. the request failed) keep sending the stored choice instead of no header.
+    return storedOrganizationId ? toStoredWorkspace(storedOrganizationId) : undefined;
+  }
+
   return (
     workspaces.find((workspace) => workspace.id === storedOrganizationId) ??
     workspaces.find((workspace) => workspace.id === response?.currentWorkspace?.id) ??
     workspaces.find((workspace) => workspace.isCurrent) ??
     workspaces[0]
   );
+}
+
+function toStoredWorkspace(organizationId: string): Workspace {
+  return {
+    id: organizationId,
+    isCurrent: true,
+    logo: null,
+    name: organizationId,
+    role: "",
+    slug: "",
+    status: "",
+  };
 }
