@@ -1,12 +1,12 @@
 import { useFetch } from "@raycast/utils";
 import { getNotraRequestInit, mapPost, NOTRA_API_URL } from "../lib/notra";
-import type { ContentTypeFilter, ListPostsResponse, Post } from "../types";
+import type { ContentTypeFilter, ListPostsResponse, Post, WorkspaceScopedOptions } from "../types";
 import { getCachedValue, getPostsCacheKey, setCachedValue } from "../utils";
 
 const PAGE_SIZE = 20;
 
-export function usePosts(contentType: ContentTypeFilter) {
-  const cacheKey = getPostsCacheKey(contentType);
+export function usePosts(contentType: ContentTypeFilter, { execute, organizationId }: WorkspaceScopedOptions = {}) {
+  const cacheKey = getPostsCacheKey(organizationId, contentType);
 
   return useFetch<ListPostsResponse, Post[], Post[]>(
     (options) => {
@@ -25,7 +25,8 @@ export function usePosts(contentType: ContentTypeFilter) {
       return `${NOTRA_API_URL}/v1/posts?${params.toString()}`;
     },
     {
-      ...getNotraRequestInit(),
+      ...getNotraRequestInit({ organizationId }),
+      execute,
       initialData: getCachedValue<Post[]>(cacheKey) ?? [],
       keepPreviousData: true,
       onData(data) {

@@ -1,5 +1,11 @@
 # Notra Changelog
 
+## [Account API Keys] - {PR_MERGE_DATE}
+
+- Added support for account API keys that work across all of your workspaces
+- Added a workspace switcher to every command when your key has access to more than one workspace
+- Fixed "View on Notra" links for content, brand identities, and integrations so they open in the right workspace
+
 ## [GEO Analytics and Raycast 2] - {PR_MERGE_DATE}
 
 - Added project-based GEO dashboards with visibility, competitors, languages, prompts, content gaps, briefs, agent readiness, scan history, settings, and AI traffic views
