@@ -18,8 +18,7 @@ export function usePosts(contentType: ContentTypeFilter, { execute, organization
         page: String(options.page + 1),
       });
 
-      params.append("status", "draft");
-      params.append("status", "published");
+      params.set("status", "draft,published");
 
       if (contentType !== "all") {
         params.append("contentType", contentType);
