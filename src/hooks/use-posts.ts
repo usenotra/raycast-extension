@@ -1,14 +1,17 @@
 import { useFetch } from "@raycast/utils";
+import { useState } from "react";
 import { getNotraRequestInit, mapPost, NOTRA_API_URL } from "../lib/notra";
-import type { ContentTypeFilter, ListPostsResponse, Post } from "../types";
+import type { ContentTypeFilter, ListPostsResponse, Post, WorkspaceScopedOptions } from "../types";
 import { getCachedValue, getPostsCacheKey, setCachedValue } from "../utils";
 
 const PAGE_SIZE = 20;
 
-export function usePosts(contentType: ContentTypeFilter) {
-  const cacheKey = getPostsCacheKey(contentType);
+export function usePosts(contentType: ContentTypeFilter, { execute, organizationId }: WorkspaceScopedOptions = {}) {
+  const cacheKey = getPostsCacheKey(organizationId, contentType);
+  // keepPreviousData smooths content type switches, but must not show another workspace's posts.
+  const [dataOrganizationId, setDataOrganizationId] = useState(organizationId);
 
-  return useFetch<ListPostsResponse, Post[], Post[]>(
+  const posts = useFetch<ListPostsResponse, Post[], Post[]>(
     (options) => {
       const params = new URLSearchParams({
         limit: String(PAGE_SIZE),
@@ -25,10 +28,12 @@ export function usePosts(contentType: ContentTypeFilter) {
       return `${NOTRA_API_URL}/v1/posts?${params.toString()}`;
     },
     {
-      ...getNotraRequestInit(),
+      ...getNotraRequestInit({ organizationId }),
+      execute,
       initialData: getCachedValue<Post[]>(cacheKey) ?? [],
       keepPreviousData: true,
       onData(data) {
+        setDataOrganizationId(organizationId);
         setCachedValue(cacheKey, data);
       },
       mapResult(result) {
@@ -39,4 +44,10 @@ export function usePosts(contentType: ContentTypeFilter) {
       },
     },
   );
+
+  if (dataOrganizationId !== organizationId) {
+    return { ...posts, data: getCachedValue<Post[]>(cacheKey) ?? [] };
+  }
+
+  return posts;
 }
