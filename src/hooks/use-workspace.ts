@@ -1,8 +1,5 @@
 import { useFetch, useLocalStorage } from "@raycast/utils";
-import {
-  SELECTED_ORGANIZATION_SLUG_STORAGE_KEY,
-  SELECTED_ORGANIZATION_STORAGE_KEY,
-} from "../constants/workspace";
+import { SELECTED_ORGANIZATION_SLUG_STORAGE_KEY, SELECTED_ORGANIZATION_STORAGE_KEY } from "../constants/workspace";
 import { getNotraRequestInit, NOTRA_API_URL } from "../lib/notra";
 import { setSelectedWorkspace } from "../lib/selected-workspace";
 import type { ListWorkspacesResponse } from "../types";
@@ -15,8 +12,9 @@ export function useWorkspace() {
     isLoading: isLoadingStoredOrganization,
   } = useLocalStorage<string>(SELECTED_ORGANIZATION_STORAGE_KEY);
   // Kept next to the id so workspace links still work when the workspace list can't be loaded.
-  const { value: storedOrganizationSlug, setValue: setStoredOrganizationSlug } =
-    useLocalStorage<string>(SELECTED_ORGANIZATION_SLUG_STORAGE_KEY);
+  const { value: storedOrganizationSlug, setValue: setStoredOrganizationSlug } = useLocalStorage<string>(
+    SELECTED_ORGANIZATION_SLUG_STORAGE_KEY,
+  );
   const {
     data,
     error,
@@ -29,13 +27,8 @@ export function useWorkspace() {
   });
 
   const workspaces = data?.workspaces ?? [];
-  const workspace = resolveSelectedWorkspace(
-    data,
-    storedOrganizationId,
-    storedOrganizationSlug,
-  );
-  const isLoading =
-    isLoadingStoredOrganization || (isLoadingWorkspaces && !data && !error);
+  const workspace = resolveSelectedWorkspace(data, storedOrganizationId, storedOrganizationSlug);
+  const isLoading = isLoadingStoredOrganization || (isLoadingWorkspaces && !data && !error);
 
   // Set during render so hooks and actions further down this render already send the right header.
   setSelectedWorkspace(workspace);
@@ -46,9 +39,7 @@ export function useWorkspace() {
     }
 
     await setStoredOrganizationId(organizationId);
-    const slug = workspaces.find(
-      (candidate) => candidate.id === organizationId,
-    )?.slug;
+    const slug = workspaces.find((candidate) => candidate.id === organizationId)?.slug;
     if (slug) {
       await setStoredOrganizationSlug(slug);
     }
